@@ -1,0 +1,879 @@
+/* ---------------------------------------------------------------------------
+   Aicountly Appointments — the design system for every Appointments screen.
+
+   SCOPED TO `.appt-ui` on purpose. The shell, the launcher and the portal
+   callback keep the tokens in index.css; everything inside the product area
+   takes its colours, spacing and components from here. One import, one place
+   to change, and no chance of a dashboard drifting away from the list it
+   links to.
+
+   The palette is green and white because that is what Aicountly is. #25b003 is
+   the brand mark and is used for accents, emphasis and chart ink; white text
+   never sits on it — #187900 does that job and clears 4.5:1 on white, which
+   #25b003 does not.
+   --------------------------------------------------------------------------- */
+
+.appt-ui {
+  --brand: #25b003;
+  --brand-soft: #e8f6e4;
+  --action: #187900;
+  --action-hover: #125d00;
+  --canvas: #f5f8f6;
+  --surface: #ffffff;
+  --surface-soft: #fbfdfb;
+  --ink: #17231e;
+  --muted: #596b62;
+  --line: #e0e8e2;
+  --line-strong: #c9d7ce;
+  --soft: #edf8ef;
+  --danger: #b42318;
+  --danger-soft: #fff0ee;
+  --warning: #875500;
+  --warning-soft: #fff4d9;
+  --info: #175cd3;
+  --info-soft: #eef4ff;
+  --purple: #6941c6;
+  --purple-soft: #f4f0ff;
+
+  min-width: 0;
+  padding: clamp(16px, 2vw, 28px);
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.appt-ui *,
+.appt-ui *::before,
+.appt-ui *::after { box-sizing: border-box; }
+
+.appt-ui button,
+.appt-ui input,
+.appt-ui select,
+.appt-ui textarea { font: inherit; }
+
+.appt-ui :focus-visible {
+  outline: 3px solid var(--action);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.appt-ui a { color: var(--action); }
+
+.appt-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Dashboard tabs ------------------------------------------------------- */
+
+.appt-dashboard-nav {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+  scrollbar-width: thin;
+}
+
+.appt-dashboard-nav a {
+  flex: 0 0 auto;
+  padding: 13px 2px;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  font-weight: 550;
+}
+
+.appt-dashboard-nav a:hover { color: var(--ink); text-decoration: none; }
+
+.appt-dashboard-nav a[aria-current='page'] {
+  color: var(--action);
+  font-weight: 700;
+  border-bottom-color: var(--brand);
+}
+
+/* --- Page header ---------------------------------------------------------- */
+
+.appt-page-header,
+.appt-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.appt-page-header { margin-bottom: 20px; }
+
+.appt-page-header h1 {
+  margin: 0 0 7px;
+  font-size: clamp(24px, 2.2vw, 34px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.appt-page-header p,
+.appt-panel-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.appt-eyebrow {
+  display: block;
+  color: var(--action);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.appt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.appt-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 15px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.appt-button:hover { background: #f1f6f2; text-decoration: none; }
+
+.appt-button-primary {
+  background: var(--action);
+  border-color: var(--action);
+  color: #fff;
+}
+
+.appt-button-primary:hover { background: var(--action-hover); color: #fff; }
+
+.appt-button-danger {
+  background: #fff;
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.appt-button-danger:hover { background: var(--danger-soft); }
+
+.appt-button-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--muted);
+}
+
+.appt-button-ghost:hover { background: #eef3ef; color: var(--ink); }
+
+.appt-button-small {
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.appt-button:disabled,
+.appt-button[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* --- Filters and fields --------------------------------------------------- */
+
+.appt-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.appt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.appt-field > span {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
+.appt-input,
+.appt-select,
+.appt-textarea {
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ink);
+  width: 100%;
+}
+
+.appt-textarea { min-height: 88px; resize: vertical; }
+
+.appt-input:focus,
+.appt-select:focus,
+.appt-textarea:focus {
+  border-color: var(--action);
+  outline: none;
+  box-shadow: 0 0 0 4px rgb(37 176 3 / 10%);
+}
+
+.appt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.appt-chip[aria-pressed='true'] {
+  background: var(--soft);
+  border-color: rgb(37 176 3 / 45%);
+  color: var(--action);
+}
+
+/* --- Cards and panels ----------------------------------------------------- */
+
+.appt-card,
+.appt-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 3px 14px rgb(22 50 30 / 4%);
+}
+
+.appt-panel { padding: 18px; }
+.appt-card-body { padding: 18px; }
+
+.appt-panel-header { margin-bottom: 16px; }
+.appt-panel-header h2,
+.appt-panel-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.appt-grid {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.appt-grid-2 { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.appt-grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+/* A wide primary panel beside a narrower secondary one — the Overview and
+   Client Experience layouts. Collapses to one column before the narrow panel
+   becomes a column of wrapped words. */
+.appt-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 1080px) {
+  .appt-split { grid-template-columns: 1fr; }
+}
+
+/* --- Metrics -------------------------------------------------------------- */
+
+.appt-metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.appt-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  min-height: 118px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 3px 14px rgb(22 50 30 / 4%);
+  text-align: left;
+  cursor: default;
+}
+
+.appt-metric[data-clickable='true'] { cursor: pointer; }
+.appt-metric[data-clickable='true']:hover { border-color: var(--line-strong); }
+
+.appt-metric-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+  border-radius: 9px;
+  background: var(--soft);
+  color: var(--action);
+  flex: none;
+}
+
+.appt-metric-icon-danger { background: var(--danger-soft); color: var(--danger); }
+.appt-metric-icon-warning { background: var(--warning-soft); color: var(--warning); }
+.appt-metric-icon-info { background: var(--info-soft); color: var(--info); }
+
+.appt-metric-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.appt-metric-value {
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.appt-metric-value[data-loading='true'] {
+  color: var(--line-strong);
+}
+
+.appt-metric-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.appt-tone-positive { color: #178001; font-weight: 650; }
+.appt-tone-negative { color: var(--danger); font-weight: 650; }
+.appt-tone-neutral { color: var(--muted); }
+
+/* --- Status pills --------------------------------------------------------- */
+
+.appt-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.appt-status-success { color: #178001; background: #eaf9e5; }
+.appt-status-info { color: #1858b8; background: var(--info-soft); }
+.appt-status-warning { color: #9a6300; background: var(--warning-soft); }
+.appt-status-danger { color: var(--danger); background: var(--danger-soft); }
+.appt-status-neutral { color: var(--muted); background: #f1f4f2; }
+.appt-status-purple { color: var(--purple); background: var(--purple-soft); }
+
+/* --- Timeline ------------------------------------------------------------- */
+
+.appt-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.appt-timeline-row {
+  display: grid;
+  grid-template-columns: 78px 10px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 66px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+
+.appt-timeline-row[data-kind='available'] {
+  border-style: dashed;
+  background: #fff;
+}
+
+.appt-timeline-time {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.appt-timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+
+.appt-timeline-body { min-width: 0; }
+.appt-timeline-body strong { display: block; font-weight: 650; }
+.appt-timeline-body span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* --- Attention list ------------------------------------------------------- */
+
+.appt-attention {
+  display: flex;
+  flex-direction: column;
+}
+
+.appt-attention button {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.appt-attention button:last-child { border-bottom: 0; }
+.appt-attention button:hover { background: #f8fbf9; }
+
+.appt-attention strong { display: block; font-weight: 650; }
+.appt-attention small { display: block; color: var(--muted); margin-top: 2px; }
+
+.appt-count-pill {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #f1f4f2;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* --- Tables --------------------------------------------------------------- */
+
+.appt-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.appt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.appt-table th,
+.appt-table td {
+  padding: 11px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.appt-table th {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface-soft);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.appt-table tbody tr:last-child td { border-bottom: 0; }
+.appt-table tbody tr:hover { background: #f8fbf9; }
+
+.appt-table .num { font-variant-numeric: tabular-nums; text-align: right; }
+
+/* --- Bars, meters and progress -------------------------------------------- */
+
+.appt-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2ef;
+  overflow: hidden;
+}
+
+.appt-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.appt-bar[data-tone='high'] > span { background: #f59e0b; }
+.appt-bar[data-tone='full'] > span { background: var(--danger); }
+.appt-bar[data-tone='info'] > span { background: var(--info); }
+
+.appt-meter-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.appt-meter-row:last-child { border-bottom: 0; }
+
+/* --- Heatmap -------------------------------------------------------------- */
+
+.appt-heatmap {
+  display: grid;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.appt-heatmap-row {
+  display: grid;
+  grid-template-columns: 96px repeat(7, minmax(44px, 1fr));
+  gap: 6px;
+  align-items: center;
+}
+
+.appt-heatmap-label {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+.appt-heatmap-cell {
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #f1f4f2;
+}
+
+.appt-heatmap-cell[data-intensity='low'] { background: #e9f7e4; }
+.appt-heatmap-cell[data-intensity='moderate'] { background: #c9edbf; }
+.appt-heatmap-cell[data-intensity='high'] { background: #fde68a; }
+.appt-heatmap-cell[data-intensity='very_high'] { background: #fdba74; }
+.appt-heatmap-cell[data-intensity='full'] { background: #fca5a5; }
+
+/* A band nobody works is not "0% busy" — it is not a cell that means
+   anything, and colouring it as quiet invites somebody to try to fill it. */
+.appt-heatmap-cell[data-closed='true'] {
+  background: repeating-linear-gradient(
+    45deg, #f7f9f8, #f7f9f8 4px, #eef2ef 4px, #eef2ef 8px
+  );
+  border-color: var(--line);
+}
+
+.appt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.appt-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.appt-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* --- Funnel --------------------------------------------------------------- */
+
+.appt-funnel { display: flex; flex-direction: column; gap: 10px; }
+
+.appt-funnel-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.appt-funnel-track {
+  height: 30px;
+  border-radius: 8px;
+  background: #f1f4f2;
+  overflow: hidden;
+}
+
+.appt-funnel-track > span {
+  display: block;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #25b003, #5ac93f);
+}
+
+.appt-funnel-row[data-measured='false'] .appt-funnel-track {
+  background: repeating-linear-gradient(
+    45deg, #f7f9f8, #f7f9f8 5px, #eef2ef 5px, #eef2ef 10px
+  );
+}
+
+/* --- Insight -------------------------------------------------------------- */
+
+.appt-insight {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 22px;
+  border: 1px solid rgb(37 176 3 / 18%);
+  border-radius: 16px;
+  background: linear-gradient(135deg, #effbea 0%, #f8fff5 55%, #eefbea 100%);
+  margin-bottom: 14px;
+}
+
+.appt-insight-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  background: #fff;
+  border-radius: 14px;
+  color: var(--brand);
+  box-shadow: 0 3px 14px rgb(22 50 30 / 6%);
+  flex: none;
+}
+
+.appt-insight strong { display: block; margin-top: 2px; font-size: 15.5px; }
+.appt-insight p { margin: 4px 0 0; color: var(--muted); font-size: 12.5px; }
+
+@media (max-width: 720px) {
+  .appt-insight { grid-template-columns: auto minmax(0, 1fr); }
+  .appt-insight .appt-button { grid-column: 1 / -1; }
+}
+
+/* --- Notices and states --------------------------------------------------- */
+
+.appt-notice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  margin-bottom: 14px;
+}
+
+.appt-notice strong { display: block; font-weight: 700; }
+.appt-notice p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+.appt-notice[data-tone='danger'] { border-color: rgb(180 35 24 / 30%); background: var(--danger-soft); }
+.appt-notice[data-tone='warning'] { border-color: rgb(135 85 0 / 28%); background: var(--warning-soft); }
+.appt-notice[data-tone='info'] { border-color: rgb(23 92 211 / 22%); background: var(--info-soft); }
+.appt-notice[data-tone='success'] { border-color: rgb(37 176 3 / 28%); background: var(--soft); }
+
+.appt-state {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+
+.appt-state strong { color: var(--ink); font-size: 15px; }
+.appt-state p { margin: 0; max-width: 46ch; line-height: 1.6; }
+
+/* --- Skeletons ------------------------------------------------------------ */
+
+.appt-skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #eef2ef 25%, #f6f9f7 50%, #eef2ef 75%);
+  background-size: 400% 100%;
+  animation: appt-shimmer 1.4s ease infinite;
+}
+
+@keyframes appt-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* --- Drawer --------------------------------------------------------------- */
+
+.appt-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgb(14 32 22 / 38%);
+  border: 0;
+  padding: 0;
+}
+
+.appt-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 81;
+  width: min(100%, 520px);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  box-shadow: var(--shadow-lg, 0 18px 48px rgb(15 40 25 / 16%));
+}
+
+.appt-drawer-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.appt-drawer-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.appt-drawer-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+.appt-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.appt-drawer-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+/* --- Slot picker ---------------------------------------------------------- */
+
+.appt-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+}
+
+.appt-slot {
+  min-height: 44px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: #fff;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.appt-slot:hover { border-color: var(--action); background: var(--soft); }
+
+.appt-slot[aria-pressed='true'] {
+  background: var(--action);
+  border-color: var(--action);
+  color: #fff;
+}
+
+/* --- Definition lists (drawers, "why this?") ------------------------------ */
+
+.appt-definition-list { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.appt-definition-list dt { font-size: 12px; font-weight: 700; color: var(--muted); }
+.appt-definition-list dd { margin: 4px 0 0; line-height: 1.6; }
+
+.appt-evidence { list-style: none; margin: 10px 0 14px; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.appt-evidence li { font-size: 13px; }
+.appt-evidence span { color: var(--muted); }
+
+/* --- Rows and utility ----------------------------------------------------- */
+
+.appt-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.appt-row-tight { display: flex; align-items: center; gap: 6px; }
+.appt-stack { display: flex; flex-direction: column; gap: 12px; }
+.appt-spacer { flex: 1; }
+
+.appt-freshness {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.appt-freshness ul { list-style: none; display: flex; flex-wrap: wrap; gap: 16px; margin: 0; padding: 0; }
+.appt-freshness strong { color: var(--ink); font-weight: 650; }
+
+@media (max-width: 720px) {
+  .appt-table th, .appt-table td { padding: 9px 10px; }
+  .appt-timeline-row { grid-template-columns: 62px 10px minmax(0, 1fr); }
+  .appt-timeline-row > :last-child { grid-column: 3; }
+  .appt-drawer { width: 100%; }
+}
+
+/* --- Spinner -------------------------------------------------------------- */
+
+.appt-spin { animation: appt-rotate 0.9s linear infinite; }
+
+@keyframes appt-rotate {
+  to { transform: rotate(360deg); }
+}

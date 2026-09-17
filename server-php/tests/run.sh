@@ -53,3 +53,15 @@ for _ in $(seq 1 40); do
 done
 
 php "$ROOT/tests/integration.php"
+
+# The HTTP layer, twice: once with Calendar answering and once without.
+#
+# "Every dashboard still renders when Calendar is down" and "availability
+# refuses rather than guessing" are both promises this product makes, and only
+# one of them can be tested with the stub running.
+CALENDAR_MODE=up php "$ROOT/tests/http.php"
+
+kill $STUB_PID 2>/dev/null || true
+wait $STUB_PID 2>/dev/null || true
+
+CALENDAR_MODE=down php "$ROOT/tests/http.php"

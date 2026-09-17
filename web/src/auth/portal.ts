@@ -19,7 +19,7 @@ import {
   resolveLoginPortalOrigin,
   resolveProductKeyFromHost,
 } from './hostnames'
-import { clearAllTokens, getAuthToken, getSesKey, saveSession } from './tokens'
+import { clearAllTokens, clearSession, getAuthToken, getSesKey, saveSession } from './tokens'
 import { getApiBaseUrl } from '../config'
 
 /** Portal convention for "come back here afterwards". */
@@ -305,15 +305,28 @@ let mintInFlight: Promise<string> | null = null
  * Concurrent callers share one request: a burst of API calls on a cold session
  * would otherwise mint a handful of keys and keep only the last.
  *
- * There is no refresh path here on purpose. The key lives in memory and
- * `getSesKey()` returns null once it expires, so the next call simply mints a
- * fresh one from the long-lived auth_token — which is what a refresh would
- * achieve. `/seskey/refresh` becomes worth wiring up when the app starts making
- * enough API calls for the extra round trip to matter.
+ * There is no `/seskey/refresh` call here on purpose. The key lives in memory
+ * and `getSesKey()` returns null once it expires, so the next call simply mints
+ * a fresh one from the long-lived auth_token — which is what a refresh would
+ * achieve.
+ *
+ * `forceRefresh` discards a key that has not expired locally. It exists for
+ * exactly one caller: the API client, after a 401. A key revoked server-side
+ * ahead of its local expiry would otherwise be presented again on the retry,
+ * and the user would be sent back to the portal over something one round trip
+ * fixes.
  */
-export async function ensureSesKey(): Promise<string> {
-  const existing = getSesKey()
-  if (existing) return existing
+export async function ensureSesKey(forceRefresh = false): Promise<string> {
+  if (!forceRefresh) {
+    const existing = getSesKey()
+    if (existing) return existing
+  } else {
+    // A key the portal has revoked ahead of its local expiry still looks valid
+    // here, so a 401 on an API call has to be able to discard it — otherwise
+    // the retry presents the same dead key and the user is signed out over
+    // something a single round trip would have fixed.
+    clearSession()
+  }
 
   if (!mintInFlight) {
     mintInFlight = requestSesKey('/seskey').finally(() => {

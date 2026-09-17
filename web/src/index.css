@@ -1,30 +1,58 @@
+/* AICOUNTLY design tokens — green and white, which is what Aicountly is.
+
+   TWO GREENS, NOT ONE. #25b003 is the brand mark and is used for accents,
+   active states and chart ink. White text never sits on it, because it does
+   not clear 4.5:1 — #187900 does that job and is what every button, link and
+   focus ring uses. Getting this wrong is how a brand-coloured product becomes
+   an unreadable one.
+
+   The product area inside the shell takes its own tokens from
+   ui/appointments-ui.css. These are for the shell, the sign-in screen, the
+   launcher and the public booking pages — the parts that sit outside it. */
+
 :root {
-  --bg: #ffffff;
-  --fg: #18181b;
-  --muted: #71717a;
-  --border: #e4e4e7;
-  --accent: #18181b;
-  --accent-fg: #fafafa;
+  --brand: #25b003;
+  --brand-soft: #e8f6e4;
+
+  --bg: #f5f8f6;
+  --fg: #17231e;
+  --muted: #596b62;
+  --border: #e0e8e2;
+  --accent: #187900;
+  --accent-fg: #ffffff;
+
+  --surface: #ffffff;
+  --surface-2: #f7faf8;
+  --surface-3: #eaf1ec;
+  --border-strong: #c9d7ce;
+  --link: #187900;
+  --focus: #187900;
+  --danger: #b42318;
+  --danger-bg: #fff0ee;
+  --success: #176a25;
+  --success-bg: #eaf7ed;
+  --warning: #875500;
+  --warning-bg: #fff4d9;
+  --info: #175cd3;
+  --info-bg: #eef4ff;
+
+  --radius: 0.875rem;
+  --radius-sm: 0.625rem;
+  --shadow: 0 3px 14px rgb(22 50 30 / 4%);
+  --shadow-lg: 0 18px 48px rgb(15 40 25 / 16%);
+  --sidebar-w: 15rem;
+  --header-h: 4rem;
 
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.6;
-  color-scheme: light dark;
+  font-size: 14px;
+
+  /* The palette is a light one by design — a premium green-and-white surface
+     with dark panels in the middle of it is neither. Declaring the scheme
+     stops the browser recolouring form controls for a dark preference. */
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #09090b;
-    --fg: #fafafa;
-    --muted: #a1a1aa;
-    --border: #27272a;
-    --accent: #fafafa;
-    --accent-fg: #09090b;
-  }
-}
-
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -32,4 +60,74 @@ body {
   background: var(--bg);
   color: var(--fg);
   -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button, input, select, textarea { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Tabular figures everywhere a count or a time appears: a column of numbers
+   that does not line up is a column somebody has to read twice. */
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   The shell at narrow widths.
+
+   A 15rem sidebar on a 390px phone leaves 150px for the product, which is not
+   a layout — it is a column of wrapped words. Below 900px the sidebar becomes
+   an off-canvas drawer behind a button in the header, and the content gets the
+   whole width.
+   --------------------------------------------------------------------------- */
+
+.shell-sidebar-toggle { display: none; }
+
+@media (max-width: 900px) {
+  .shell-sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    cursor: pointer;
+    color: var(--fg);
+  }
+
+  .shell-sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0;
+    z-index: 60;
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shell-sidebar[data-open='true'] { transform: translateX(0); }
+
+  .shell-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgb(14 32 22 / 38%);
+    border: none;
+    padding: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell-sidebar { transition: none; }
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
