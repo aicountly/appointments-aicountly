@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aicountly Appointments — dashboard visual reference</title>
+<link rel="stylesheet" href="appointments-dashboard-reference.css">
+</head>
+
+<!--
+  AICOUNTLY Appointments — dashboard visual reference
+  ==================================================
+
+  REFERENCE ONLY. This file is not the production application, is not served,
+  and is not part of the build. Open it in a browser to see the agreed visual
+  direction with no data, no state and no framework in the way.
+
+  The production UI is React, under web/src/, broken into the components named
+  in ../APPOINTMENTS_ARCHITECTURE.md — AppShell, AppointmentsSidebar,
+  AppointmentsHeader, DashboardSwitcher, MetricCard, TimelinePanel,
+  AttentionPanel, InsightBanner and the rest. The class names below were kept
+  identical to the production ones on purpose, so this file and a running
+  screen can be read side by side.
+
+  What is deliberately different in production, and must not be "fixed" here:
+
+    * Every number below is invented. The real screens render Appointments'
+      own arithmetic, and a panel with nothing to show renders an explicit
+      empty state rather than a zero.
+    * Solid action buttons are #187900, not #25b003. White text on #25b003
+      does not reach 4.5:1 and every primary button carries a label.
+    * Real screens have four states each — loading, empty, error, partial.
+      This file shows only the loaded one.
+    * The nav is a route config (web/src/shell/navConfig.ts), filtered by the
+      permissions the backend returned. Links are not hard-coded.
+-->
+
+<body>
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div>
+        <strong>Appointments</strong>
+        <small>Aicountly</small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active" href="#">Overview</a>
+      <a class="nav-item" href="#">Live Operations</a>
+      <a class="nav-item" href="#">Capacity</a>
+      <a class="nav-item" href="#">Client Experience</a>
+      <a class="nav-item" href="#">Intelligence</a>
+
+      <div class="nav-separator"></div>
+
+      <a class="nav-item" href="#">Calendar</a>
+      <a class="nav-item" href="#">Appointments</a>
+      <a class="nav-item" href="#">Clients</a>
+      <a class="nav-item" href="#">Services</a>
+      <a class="nav-item" href="#">Team & Availability</a>
+      <a class="nav-item" href="#">Waitlist</a>
+      <a class="nav-item" href="#">Booking Pages</a>
+      <a class="nav-item" href="#">Integrations</a>
+      <a class="nav-item" href="#">Settings</a>
+    </nav>
+  </aside>
+
+  <main class="workspace">
+
+    <header class="topbar">
+      <div>
+        <h1>Aicountly Appointments</h1>
+      </div>
+
+      <div class="top-search">
+        <input
+          type="search"
+          placeholder="Search clients, appointments, services..."
+        />
+      </div>
+
+      <div class="top-actions">
+        <button class="btn secondary">Find Slot</button>
+        <button class="btn primary">+ New Appointment</button>
+      </div>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <h2>Appointment Command Center</h2>
+        <p>Real-time insights. Smoother days. Happier clients.</p>
+      </div>
+
+      <div class="filters">
+        <button class="filter">Today ▾</button>
+        <button class="filter">All Locations ▾</button>
+        <button class="filter">All Team ▾</button>
+        <button class="filter">All Services ▾</button>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      <article class="metric-card">
+        <span>Today's Appointments</span>
+        <strong>48</strong>
+        <small class="positive">↑ 12%</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Upcoming</span>
+        <strong>126</strong>
+        <small class="positive">↑ 8%</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Confirmed</span>
+        <strong>39</strong>
+        <small class="positive">↑ 6%</small>
+      </article>
+
+      <article class="metric-card warning">
+        <span>Pending</span>
+        <strong>6</strong>
+        <small>Needs action</small>
+      </article>
+
+      <article class="metric-card">
+        <span>Waitlist</span>
+        <strong>12</strong>
+      </article>
+
+      <article class="metric-card danger">
+        <span>No-show Risk</span>
+        <strong>4</strong>
+      </article>
+
+      <article class="metric-card">
+        <span>Available Slots</span>
+        <strong>17</strong>
+      </article>
+
+      <article class="metric-card">
+        <span>Utilisation</span>
+        <strong>82%</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+
+      <article class="panel schedule-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Today's Schedule</h3>
+            <p>Your day at a glance.</p>
+          </div>
+          <button class="ghost-btn">View Calendar</button>
+        </div>
+
+        <div class="timeline">
+
+          <div class="appointment-row completed">
+            <div class="time">09:00</div>
+            <div class="appointment-content">
+              <strong>Raj Sharma</strong>
+              <span>Consultation · 60 min</span>
+            </div>
+            <span class="status success">Completed</span>
+          </div>
+
+          <div class="appointment-row progress">
+            <div class="time">10:00</div>
+            <div class="appointment-content">
+              <strong>ABC Pvt Ltd</strong>
+              <span>Team Coaching · 90 min</span>
+            </div>
+            <span class="status info">In Progress</span>
+          </div>
+
+          <div class="appointment-row confirmed">
+            <div class="time">11:30</div>
+            <div class="appointment-content">
+              <strong>Priya Kapoor</strong>
+              <span>Consultation · 30 min</span>
+            </div>
+            <span class="status success">Confirmed</span>
+          </div>
+
+          <div class="appointment-row available">
+            <div class="time">13:00</div>
+            <div class="appointment-content">
+              <strong>Available Slot</strong>
+              <span>60 minutes available</span>
+            </div>
+            <button class="mini-btn">+ Book</button>
+          </div>
+
+          <div class="appointment-row pending">
+            <div class="time">15:30</div>
+            <div class="appointment-content">
+              <strong>Amit Jain</strong>
+              <span>Follow-up · 30 min</span>
+            </div>
+            <span class="status warning">Awaiting Confirmation</span>
+          </div>
+
+        </div>
+      </article>
+
+      <article class="panel attention-panel">
+        <div class="panel-header">
+          <div>
+            <h3>Needs Attention</h3>
+            <p>Items requiring action.</p>
+          </div>
+        </div>
+
+        <div class="attention-list">
+          <button>6 appointments unconfirmed <span>›</span></button>
+          <button>3 forms incomplete <span>›</span></button>
+          <button>2 deposits pending <span>›</span></button>
+          <button>4 appointments at no-show risk <span>›</span></button>
+          <button>12 people on waitlist <span>›</span></button>
+          <button>Schedule gap detected <span>›</span></button>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="insight-banner">
+      <div class="ai-icon">✦</div>
+      <div>
+        <small>Aicountly Insight</small>
+        <strong>
+          3:00–5:00 PM is your highest-demand period.
+        </strong>
+        <p>
+          Two waitlisted clients match tomorrow's newly available slot.
+        </p>
+      </div>
+      <button class="btn secondary">View Matches</button>
+    </section>
+  </main>
+
+</div>
+</body>
+</html>

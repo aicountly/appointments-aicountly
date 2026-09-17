@@ -8,11 +8,30 @@ with a small PHP API alongside it. Both halves deploy to cPanel.
 | Production | https://appointments.aicountly.com | https://appointments.aicountly.com/api |
 | Sandbox | https://appointments.gh.aicountly.com | https://appointments.gh.aicountly.com/api |
 
-## What this app does today
+## What this app does
 
-Login → Dashboard. The dashboard shows a welcome message and a **Log out**
-button, and nothing else. No navigation, no modules, no placeholder cards —
-those arrive with the product.
+Appointments books people into staff diaries: services, staff availability,
+resources, waitlist, public booking pages, forms, reminders and the full booking
+lifecycle, with five purpose-built dashboards over the top.
+
+It owns the **booking**. It does not own the diary and it does not own the
+person:
+
+- **Aicountly Calendar** owns every calendar, event, time, recurrence, free/busy
+  answer and external provider sync. Appointments reads availability and writes
+  events through Calendar's live API and stores only the event reference.
+- **Aicountly Contacts** owns client identity.
+- **Manage** owns companies and branches, **Pay** owns money, **Receptionist**
+  owns voice, **Connect** owns rooms, **CRM** owns Customer 360, **Billing** owns
+  invoices, **Console** owns AI provider keys.
+
+**There is no cross-application database synchronisation anywhere in this
+product.** No mirrored tables, no periodic imports, no cross-database queries, no
+shadow copies. Every cross-product read is a live API call made by this backend.
+If a product cannot answer, the screen says so — it never falls back to a stale
+local copy. That rule is not negotiable, and
+[docs/APPOINTMENTS_DATA_OWNERSHIP.md](docs/APPOINTMENTS_DATA_OWNERSHIP.md)
+explains what it costs and what to do instead when it feels expensive.
 
 Signing in is the AICOUNTLY portal's job, the same as every other AICOUNTLY
 SaaS: the app redirects to the portal, the portal returns an `auth_token`, and
@@ -21,12 +40,48 @@ in to another AICOUNTLY product lands straight on the dashboard.
 
 See [docs/auth/AICOUNTLY_AUTH_WORKFLOW.md](docs/auth/AICOUNTLY_AUTH_WORKFLOW.md).
 
+### The five dashboards
+
+Five distinct dashboards, not one dashboard with the widgets rearranged. Each
+answers a different question:
+
+| Route | Question it answers |
+| --- | --- |
+| `/dashboard/overview` | What is happening today and what needs a decision? |
+| `/dashboard/live` | What is happening *right now* — who has arrived, who is late, who is waiting? |
+| `/dashboard/capacity` | Is sellable time being used, and by whom? |
+| `/dashboard/client-experience` | How does being a client of this business feel? |
+| `/dashboard/intelligence` | What is changing over time, and what should we do about it? |
+
+Schedule Health is a decomposed score, not a magic number: it starts at 100 and
+subtracts named components, and the response carries every penalty that produced
+the figure. Same for no-show risk — ten named indicators with printed weights, and
+every badge can say which of them fired. See
+[docs/APPOINTMENTS_AI.md](docs/APPOINTMENTS_AI.md).
+
+## Documentation
+
+| Document | What it covers |
+| --- | --- |
+| [docs/APPOINTMENTS_ARCHITECTURE.md](docs/APPOINTMENTS_ARCHITECTURE.md) | layers, request lifecycle, storage, background work, degraded mode |
+| [docs/APPOINTMENTS_DATA_OWNERSHIP.md](docs/APPOINTMENTS_DATA_OWNERSHIP.md) | who owns what, the no-synchronisation rule, the two apparent exceptions |
+| [docs/APPOINTMENTS_INTEGRATIONS.md](docs/APPOINTMENTS_INTEGRATIONS.md) | every integration, its honest state, the feature flags |
+| [docs/CALENDAR_API_INTEGRATION.md](docs/CALENDAR_API_INTEGRATION.md) | the Calendar contract, the endpoints added for this, failure behaviour |
+| [docs/APPOINTMENTS_AI.md](docs/APPOINTMENTS_AI.md) | the insight engine, Console-governed keys, the explainable scores |
+| [docs/APPOINTMENTS_SECURITY.md](docs/APPOINTMENTS_SECURITY.md) | auth, tenant isolation, RBAC, public booking protections, audit |
+| [docs/ui/appointments-dashboard-reference.html](docs/ui/appointments-dashboard-reference.html) | the visual reference — **not** production code |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | cPanel deployment |
+
 ## Layout
 
 ```
 web/          React app (Vite). Builds to web/dist, deployed to the document root.
 server-php/   PHP API. Deployed to the api/ folder inside the document root.
-docs/         deployment and auth notes
+  src/          framework, Clients/ (cross-product), Domain/, Ai/, Dashboards/, Controllers/
+  database/     migrations
+  bin/          migrate.php, reminders.php, calendar-retry.php
+  tests/        integration + HTTP suites and the Calendar stub
+docs/         architecture, ownership, integrations, security, deployment, auth
 ```
 
 ## Getting started
@@ -52,6 +107,7 @@ same-origin.
 | `npm run dev` | Vite dev server on http://localhost:5173 |
 | `npm run build` | Type-check, then build to `web/dist/` |
 | `npm run typecheck` | Type-check only |
+| `npm run test:ui` | Frontend tests (`node --test`) |
 | `npm run preview` | Serve the production build locally |
 
 The PHP API has no build step and no dependencies. To run it locally:
@@ -61,6 +117,47 @@ cd server-php
 cp .env.example .env      # set APP_ENV=local
 php -S localhost:8000
 ```
+
+### Database
+
+Appointments has its **own** PostgreSQL database, holding appointment-owned data
+only. It is never pointed at Calendar's, Contacts' or anybody else's.
+
+```bash
+php server-php/bin/migrate.php     # applies database/migrations/ in order
+curl https://<host>/api/health     # reports usable:false until Calendar is configured
+```
+
+Migrations are idempotent and safe to re-run. Times are stored in UTC as
+`TIMESTAMPTZ` and rendered in the company's timezone.
+
+### Background jobs
+
+Two CLI entry points, both safe to run repeatedly. Add them to cron on the
+server:
+
+```
+*/5 * * * *  php <document root>/api/bin/reminders.php
+*/5 * * * *  php <document root>/api/bin/calendar-retry.php
+```
+
+`reminders.php` sends what is due. `calendar-retry.php` finishes writing Calendar
+events for bookings that were taken while Calendar was unreachable — customer
+intent is never dropped because a downstream product blinked, and never shown as
+confirmed in a diary it is not in.
+
+### Tests
+
+```bash
+server-php/tests/run.sh    # 76 integration + 31 HTTP tests, the HTTP suite run twice
+cd web && npm run test:ui  # frontend tests
+cd web && npm run build    # type-check, then build
+```
+
+`run.sh` runs the HTTP suite twice — once with a stateful Calendar stub
+reachable, once with it down — so the degraded path is a tested case rather than
+a comment. It needs a PostgreSQL database it may write to; see the script for the
+variables.
 
 ## Environment variables
 
@@ -96,6 +193,25 @@ redeploying.
 
 This is the opposite of `server-php`, which is PHP and does read its own `.env`
 on every request.
+
+### Server variables
+
+`server-php/.env.example` is the documented list, and it is the one to read — it
+explains what each variable does and what happens when it is missing. The short
+version:
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `DB_HOST` `DB_PORT` `DB_NAME` `DB_USER` `DB_PASS` | **yes** | Appointments' own database |
+| `CALENDAR_SERVICE_KEY` | **yes** | without it there is no availability and no booking; `/api/health` reports `usable:false` |
+| `APP_ENV`, `APP_PRODUCT_KEY` | yes | `APP_PRODUCT_KEY=appointments` is the cross-product re-entry guard |
+| `SERVICE_KEYS` | for inbound | `product:key` pairs for products that call Appointments — Receptionist, CRM |
+| `CONSOLE_API_URL`, `CONSOLE_SERVICE_KEY` | for AI | the LLM provider key lives in Console and is never written here |
+| `APPOINTMENTS_*_ENABLED` | no | feature flags; a flag without its key counts as **off** |
+| `*_SERVICE_KEY`, `*_API_BASE` | no | per-product keys and base URLs; base URLs are derived from this host's name when unset, so sandbox talks to sandbox |
+
+There is deliberately **no provider key and no LLM key** in this file. Generate
+service keys with `openssl rand -hex 32`.
 
 ## Deployment
 
