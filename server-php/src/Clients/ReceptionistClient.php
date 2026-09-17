@@ -8,29 +8,29 @@ use Aicountly\Api\Env;
 use Aicountly\Api\Features;
 
 /**
- * Aicountly Receptionist — the voice front desk.
+ * Aicountly Lobby (formerly Receptionist) — the voice front desk.
  *
  * ## Which way the calls go
  *
- * Mostly the other way. Receptionist calls Appointments: find slots, hold one,
+ * Mostly the other way. Lobby calls Appointments: find slots, hold one,
  * book it, reschedule, cancel. Those are Appointments' own routes and are the
  * real integration — see Routes.php and the service-key path in Auth.
  *
- * This client is the thin return leg. Appointments asks Receptionist for two
+ * This client is the thin return leg. Appointments asks Lobby for two
  * things and nothing else:
  *
  *   1. aggregate contribution figures for the Intelligence dashboard — how many
  *      appointments the voice front desk initiated, booked, moved, cancelled;
- *   2. a deep link, so "Open in Receptionist" goes somewhere.
+ *   2. a deep link, so "Open in Lobby" goes somewhere.
  *
  * ## What it must never do
  *
  * Read a call, a recording, a transcript or a conversation. Those are
- * Receptionist's and they stay there. Appointments records that a booking's
+ * Lobby's and they stay there. Appointments records that a booking's
  * source was RECEPTIONIST and keeps `receptionist_session_uuid` as a reference
  * — that is the entire footprint, and it is a reference, not a copy.
  *
- * Receptionist is not live yet, so the flag is off and every Receptionist
+ * Lobby is not live yet, so the flag is off and every Lobby
  * surface says so rather than showing a panel of zeroes that look like a quiet
  * week.
  */
@@ -43,12 +43,12 @@ final class ReceptionistClient extends ApiClient
 
     protected function productionBase(): string
     {
-        return 'https://receptionist.aicountly.com';
+        return 'https://lobby.aicountly.com';
     }
 
     protected function sandboxBase(): string
     {
-        return 'https://receptionist.gh.aicountly.com';
+        return 'https://lobby.gh.aicountly.com';
     }
 
     protected function baseEnvKey(): string
@@ -63,7 +63,7 @@ final class ReceptionistClient extends ApiClient
 
     public function unavailableMessage(): string
     {
-        return 'Receptionist integration is not connected.';
+        return 'Lobby integration is not connected.';
     }
 
     /**
@@ -85,7 +85,7 @@ final class ReceptionistClient extends ApiClient
         );
     }
 
-    /** Where "Open in Receptionist" goes. A route, not a URL from an API response. */
+    /** Where "Open in Lobby" goes. A route, not a URL from an API response. */
     public function deepLink(int $cmpId): string
     {
         return $this->base() . '/?cmp_id=' . $cmpId;
